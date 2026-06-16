@@ -22,7 +22,8 @@ export default async function handler(req, res) {
        'Authorization': `Bearer ${apiKey}`,
      },
      body: JSON.stringify({
-       model: '[杨枝甘露]claude-sonnet-4-6',
+       model: '[k]claude-sonnet-4-6',
+
        max_tokens: 1024,
        messages: messages
      }),
