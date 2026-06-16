@@ -2,9 +2,9 @@ import { useState } from 'react';
 
 function App() {
   const [messages, setMessages] = useState(() => {
-  const saved = localStorage.getItem('chat-history');
-  return saved ? JSON.parse(saved) : [];
-});
+    const saved = localStorage.getItem('chat-history');
+    return saved ? JSON.parse(saved) : [];
+  });
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -12,22 +12,22 @@ function App() {
     if (!input.trim() || loading) return;
 
     const userMsg = { role: 'user', content: input };
-    setMessages(prev => [...prev, userMsg]);
+    const newMessages = [...messages, userMsg];
+    setMessages(newMessages);
+    localStorage.setItem('chat-history', JSON.stringify(newMessages));
     setInput('');
     setLoading(true);
-localStorage.setItem('chat-history', JSON.stringify([...messages, userMsg]));
+
     try {
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: [...messages, userMsg] })
+        body: JSON.stringify({ messages: newMessages })
       });
       const data = await res.json();
-      setMessages(prev => {
-  const updated = [...prev, { role: 'assistant', content: data.content }];
-  localStorage.setItem('chat-history', JSON.stringify(updated));
-  return updated;
-});
+      const updated = [...newMessages, { role: 'assistant', content: data.content }];
+      setMessages(updated);
+      localStorage.setItem('chat-history', JSON.stringify(updated));
     } catch (e) {
       setMessages(prev => [...prev, { role: 'assistant', content: '出错了，请重试' }]);
     } finally {
@@ -35,9 +35,17 @@ localStorage.setItem('chat-history', JSON.stringify([...messages, userMsg]));
     }
   };
 
+  const clearChat = () => {
+    setMessages([]);
+    localStorage.removeItem('chat-history');
+  };
+
   return (
     <div style={{ maxWidth: 600, margin: '0 auto', padding: 20 }}>
-      <h1>我们的小家</h1>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+        <h1 style={{ margin: 0 }}>我们的小家</h1>
+        <button onClick={clearChat} style={{ padding: '6px 12px', background: '#ff6b6b', color: 'white', border: 'none', borderRadius: 6, cursor: 'pointer' }}>清空记录</button>
+      </div>
       <div style={{ height: 400, overflowY: 'auto', border: '1px solid #ccc', padding: 10, marginBottom: 10 }}>
         {messages.map((msg, i) => (
           <div key={i} style={{ textAlign: msg.role === 'user' ? 'right' : 'left', margin: '8px 0' }}>
