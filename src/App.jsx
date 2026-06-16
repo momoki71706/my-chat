@@ -13,46 +13,48 @@ function App() {
     setInput('');
     setLoading(true);
 
-  try {
-  const res = await fetch('/api/chat', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ messages: [...messages, userMsg] })
-  });
-  const data = await res.json();
-  setMessages(prev => [...prev, { role: 'assistant', content: data.content }]);
-} catch (e) {
-  setMessages(prev => [...prev, { role: 'assistant', content: '出错了，请重试' }]);
-} finally {
-  setLoading(false);
-}
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: [...messages, userMsg] })
+      });
+      const data = await res.json();
+      setMessages(prev => [...prev, { role: 'assistant', content: data.content }]);
+    } catch (e) {
+      setMessages(prev => [...prev, { role: 'assistant', content: '出错了，请重试' }]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div style={{ maxWidth: 500, margin: '0 auto', padding: 20, fontFamily: 'sans-serif' }}>
-      <h1>🤖 我的AI聊天</h1>
-      <div style={{ border: '1px solid #ddd', height: 400, overflowY: 'auto', padding: 10, marginBottom: 10, background: '#f9f9f9', borderRadius: 8 }}>
+    <div style={{ maxWidth: 600, margin: '0 auto', padding: 20 }}>
+      <h1>我们的小家</h1>
+      <div style={{ height: 400, overflowY: 'auto', border: '1px solid #ccc', padding: 10, marginBottom: 10 }}>
         {messages.map((msg, i) => (
-          <div key={i} style={{ textAlign: msg.role === 'user' ? 'right' : 'left', margin: '5px 0' }}>
-            <strong>{msg.role === 'user' ? '我' : 'AI'}：</strong>{msg.content}
+          <div key={i} style={{ textAlign: msg.role === 'user' ? 'right' : 'left', margin: '8px 0' }}>
+            <span style={{ background: msg.role === 'user' ? '#007bff' : '#f0f0f0', color: msg.role === 'user' ? 'white' : 'black', padding: '8px 12px', borderRadius: 12, display: 'inline-block' }}>
+              {msg.content}
+            </span>
           </div>
         ))}
-        {loading && <div>AI思考中...</div>}
       </div>
       <div style={{ display: 'flex', gap: 10 }}>
-        <input 
-          style={{ flex: 1, padding: 10, border: '1px solid #ccc', borderRadius: 6 }} 
-          value={input} 
-          onChange={(e) => setInput(e.target.value)} 
+        <input
+          style={{ flex: 1, padding: 10, border: '1px solid #ccc', borderRadius: 6 }}
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
-          placeholder="输入你的问题..." 
+          placeholder="输入消息..."
           disabled={loading}
         />
-        <button style={{ padding: '10px 24px', background: '#007bff', color: 'white', border: 'none', borderRadius: 6, cursor: 'pointer' }} onClick={sendMessage} disabled={loading}>
+        <button onClick={sendMessage} style={{ padding: '10px 20px', background: '#007bff', color: 'white', border: 'none', borderRadius: 6, cursor: 'pointer' }}>
           发送
         </button>
       </div>
     </div>
   );
 }
-}
+
 export default App;
