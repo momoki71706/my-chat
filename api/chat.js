@@ -28,7 +28,6 @@ export default async function handler(req, res) {
      }),
    });
 
-   const content = JSON.stringify(data);
 
 
    const content = data.choices?.[0]?.message?.content || '未收到回复';
