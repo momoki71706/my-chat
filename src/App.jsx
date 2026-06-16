@@ -1,7 +1,10 @@
 import { useState } from 'react';
 
 function App() {
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState(() => {
+  const saved = localStorage.getItem('chat-history');
+  return saved ? JSON.parse(saved) : [];
+});
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -12,7 +15,7 @@ function App() {
     setMessages(prev => [...prev, userMsg]);
     setInput('');
     setLoading(true);
-
+localStorage.setItem('chat-history', JSON.stringify([...messages, userMsg]));
     try {
       const res = await fetch('/api/chat', {
         method: 'POST',
@@ -20,7 +23,11 @@ function App() {
         body: JSON.stringify({ messages: [...messages, userMsg] })
       });
       const data = await res.json();
-      setMessages(prev => [...prev, { role: 'assistant', content: data.content }]);
+      setMessages(prev => {
+  const updated = [...prev, { role: 'assistant', content: data.content }];
+  localStorage.setItem('chat-history', JSON.stringify(updated));
+  return updated;
+});
     } catch (e) {
       setMessages(prev => [...prev, { role: 'assistant', content: '出错了，请重试' }]);
     } finally {
