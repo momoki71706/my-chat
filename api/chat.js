@@ -1,4 +1,3 @@
-cat > api/chat.js << 'EOF'
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: '只支持POST请求' });
@@ -10,14 +9,14 @@ export default async function handler(req, res) {
   }
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
+  const apiUrl = process.env.ANTHROPIC_BASE_URL;
   if (!apiKey) {
     return res.status(500).json({ error: '服务器未配置API密钥' });
   }
 
   try {
-      const response = await fetch(`${apiUrl}/v1/messages`, {
-
-
+    const response = await fetch(`${apiUrl}/v1/messages`, {
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'x-api-key': apiKey,
@@ -37,4 +36,4 @@ export default async function handler(req, res) {
     res.status(500).json({ error: '网络请求失败' });
   }
 }
-EOF
+
