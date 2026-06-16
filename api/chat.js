@@ -3,8 +3,8 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: '只支持POST请求' });
   }
 
-  const { message } = req.body;
-  if (!message) {
+  const { messages } = req.body;
+  if (!messages) {
     return res.status(400).json({ error: '消息不能为空' });
   }
 
@@ -24,7 +24,7 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: 'claude-3-5-sonnet-20241022',
-        messages: [{ role: 'user', content: message }],
+        messages: messages,
         max_tokens: 1024,
       }),
     });
