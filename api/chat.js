@@ -36,7 +36,7 @@ export default async function handler(req, res) {
     }
 
     const reply = data.choices?.[0]?.message?.content || '未收到回复';
-    res.status(200).json({ reply });
+    res.status(200).json({ content: reply });
 
   } catch (error) {
     res.status(500).json({ error: '网络请求失败' });
