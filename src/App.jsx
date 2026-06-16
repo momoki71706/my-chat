@@ -13,11 +13,19 @@ function App() {
     setInput('');
     setLoading(true);
 
-    setTimeout(() => {
-      setMessages(prev => [...prev, { role: 'assistant', content: '这是测试回复，等连上Claude就能真的聊天啦！' }]);
-      setLoading(false);
-    }, 1000);
-  };
+  try {
+  const res = await fetch('/api/chat', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ messages: [...messages, userMsg] })
+  });
+  const data = await res.json();
+  setMessages(prev => [...prev, { role: 'assistant', content: data.content }]);
+} catch (e) {
+  setMessages(prev => [...prev, { role: 'assistant', content: '出错了，请重试' }]);
+} finally {
+  setLoading(false);
+}
 
   return (
     <div style={{ maxWidth: 500, margin: '0 auto', padding: 20, fontFamily: 'sans-serif' }}>
