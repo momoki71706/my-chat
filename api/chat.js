@@ -28,7 +28,8 @@ export default async function handler(req, res) {
      }),
    });
 
-   const data = await response.json();
+   const content = data.choices?.[0]?.message?.content || data.content?.[0]?.text || JSON.stringify(data);
+
    const content = data.choices?.[0]?.message?.content || '未收到回复';
    res.status(200).json({ content });
  } catch (error) {
