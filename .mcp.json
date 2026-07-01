@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "ombre-brain": {
+      "type": "http",
+      "url": "${OMBRE_MCP_URL}/mcp",
+      "headers": {
+        "Authorization": "Bearer ${OMBRE_MCP_TOKEN}"
+      }
+    }
+  }
+}
